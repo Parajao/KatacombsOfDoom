@@ -1,2 +1,5 @@
 FSharp.Core
 FsUnit
+BenchmarkDotNet.Core
+Expecto.FsCheck
+Expecto.BenchmarkDotNet

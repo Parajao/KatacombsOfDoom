@@ -1,8 +1,8 @@
 module KatacombsOfDoomTests
+open Expecto
 
-open NUnit.Framework
-open FsUnit
-
-[<Test>]
-let ``Example Test`` () =
-    1 |> should equal 1
+let tests =
+  test "A simple test" {
+    let subject = "Hello World"
+    Expect.equal subject "Hello World" "The strings should equal"
+  }
