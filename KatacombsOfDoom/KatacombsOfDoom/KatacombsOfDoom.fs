@@ -1,5 +1,9 @@
 module KatacombsOfDoom
 
+//**************
+// MAIN
+//**************
+
 [<EntryPoint>]
 let main argv =
     printfn "%A" argv

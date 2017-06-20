@@ -48,24 +48,33 @@ module Domain
 // MODELS
 //**************
 
-type Item = { Name : string; Description: string }
+type Item = {
+        Name : string;
+        Description: string
+    }
 type Items = Item List
 type Location = Location of int * int
-type Room = { Location : Location; Description : string; Items : Items }
+type Room = {
+        Location : Location;
+        Content : string;
+        Items : Items
+    }
+type RoomDescription = RoomDescription of string
 type Maze = Room List
-type Player = { CurrentRoom : Room; Items : Items }
+type Player = {
+        CurrentRoom : Room;
+        Items : Items
+    }
 type Direction = NORTH
                | EAST
                | SOUTH
                | WEST
 
 //**************
-// ACTIONS
+// COMMANDS
 //**************
-type Look = Player -> string
-let look : Look =
-    fun player -> player.CurrentRoom.Description
 
-type Move = Direction -> Room -> Room
-type Pick = Player -> Item -> Player
-type RetrieveExits = Maze -> Room -> Direction List
+type Look = Player -> RoomDescription
+type Move = Player -> Direction -> Maze  -> Player
+type PickUp = Player -> Item -> Maze ->  Player * Maze
+type Suicide = Unit -> Unit
