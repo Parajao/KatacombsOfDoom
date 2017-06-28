@@ -1,6 +1,6 @@
 # Katacombs of doom
 
-A design exercise for a fun
+A design exercise for a fun(ctional) evening
 
 ## Specification
 
