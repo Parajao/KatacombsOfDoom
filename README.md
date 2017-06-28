@@ -11,3 +11,7 @@ A design exercise for a fun(ctional) evening
 1. the room can contain items to collect
 1. looking in a room shows the room description the possible exits and the items
 1. to terminate the game the player has to commit suicide
+
+## Useful references
+
+(How to write a functional program with IO mutation and other effects)[http://functionaltalks.org/2013/06/20/paul-chiusano-how-to-write-a-functional-program-with-io-mutation-and-other-effects/]
