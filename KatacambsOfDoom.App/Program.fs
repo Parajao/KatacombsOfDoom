@@ -3,7 +3,9 @@
 open System
 
 module Main =       
-    type Game = Game
+    type Game = string -> string
+    let game : Game =
+        fun command -> "see you in hell"
 
     //**************************
     // MONADIC IO
@@ -29,12 +31,20 @@ module Main =
         type MInputReader = IO<string>
         type MOutputWriter = string -> IO<unit>
         type MGameEngine = Game -> MInputReader -> MOutputWriter -> int
-        let mGameEngine : MGameEngine =
+        let rec mGameEngine : MGameEngine =
             fun game reader writer ->
-                reader >>= (fun input -> 
-                writer "see you in hell")
+                reader >>= 
+                    (fun input -> 
+                        writer <| game input >>=
+                            match input with
+                            | "suicide" ->     
+                                (fun _ -> 
+                                    unit 0)
+                            | _ ->  
+                                (fun _ -> 
+                                    unit (mGameEngine game reader writer)))
                 |> run
-                0
+                
     
     //**************************
     // HASKELL LIKE MONADIC IO
@@ -44,7 +54,7 @@ module Main =
         type HIO<'T> = Action of (unit -> 'T)
 
         let private raw  (Action f) = f
-        let private run  io         = raw io ()
+        let run  io         = raw io ()
         let private eff  g   io     = raw io () |> g
         let private bind io  rest   = Action (fun () -> io |> eff rest |> run)
         let private comb io1 io2    = Action (fun () -> run io1; run io2)
@@ -77,13 +87,20 @@ module Main =
         type HInputReader = HIO<string>
         type HOutputWriter = string -> HIO<unit>
         type HGameEngine = Game -> HInputReader -> HOutputWriter -> int
-        let hGameEngine : HGameEngine =
+        let rec hGameEngine : HGameEngine =
             fun game reader writer ->
-                let (Action ()) = io{
+                let action = io{
                     let! input = reader
-                    return! writer "see you in hell"
+                    return! writer <| game input 
+                    match input with
+                    | "suicide" -> 
+                        return 0
+                    |_ -> 
+                        return hGameEngine game reader writer
                 }
-                0
+                run action
+                    
+                    
 
     //**************************
     // IMPURE IO
@@ -93,16 +110,22 @@ module Main =
         fun () -> Console.ReadLine()
 
     type OutputWriter = string -> Unit
-    let writeOutput : OutputWriter =
-        fun message -> Console.WriteLine message
+    let writeOutput : OutputWriter = Console.WriteLine
 
     type GameEngine = Game -> InputReader -> OutputWriter -> int
-    let gameEngine : GameEngine =
+    let rec gameEngine : GameEngine =
         fun game reader writer ->
-            writer "see you in hell"
-            0
+            let input = reader ()
+            writer <| game input
+            match input with
+            | "suicide" ->
+                0
+            | _ ->
+                gameEngine game reader writer
+            
 
     [<EntryPoint>]
     let main argv = 
-        printfn "%A" argv
-        0 // restituisce un intero come codice di uscita
+        let result = gameEngine game readInput writeOutput
+        readInput () |> ignore
+        result 

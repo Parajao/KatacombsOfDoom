@@ -22,7 +22,6 @@ module AcceptanceTests =
         
         [<Fact>]
         let ``quits then game when suiciding`` () =
-            let game = Game
             let reader : InputReader =
                 fun () -> "suicide"
             let mutable output = []
@@ -41,7 +40,6 @@ module AcceptanceTests =
 
         [<Fact>]
         let ``monadically quits then game when suiciding`` () =
-            let game = Game
             let reader : MInputReader =
                 IO(fun () -> "suicide")
 
@@ -61,7 +59,6 @@ module AcceptanceTests =
 
         [<Fact>]
         let ``monadically quits then game when suiciding`` () =
-            let game = Game
             let inputs = new Queue<string>(["suicide"])
             let reader : HInputReader =
                 Action(fun () -> inputs.Dequeue())
