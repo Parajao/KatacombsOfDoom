@@ -4,7 +4,10 @@ module Domain =
     //**************
     // MODELS
     //**************
-
+    type Game = string -> string
+    let game : Game =
+        fun command -> "see you in hell"
+    
     type Item = {
             Name : string;
             Description: string

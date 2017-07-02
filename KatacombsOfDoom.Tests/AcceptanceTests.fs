@@ -1,7 +1,8 @@
 ﻿namespace KatacombsOfDoom.Tests
 
 module AcceptanceTests =
-    open KatacombsOfDoom.Main
+    open KatacombsOfDoom
+    open KatacombsOfDoom.Domain
     open Swensen.Unquote
     open Xunit
     open FsUnit.Xunit    
@@ -19,33 +20,34 @@ module AcceptanceTests =
     //    test<@ ([3; 2; 1; 0] |> List.map ((+) 1)) = [1 + 3..1 + 0] @>
 
     module ImpureAcceptance =
-        
+        open IMain
+
         [<Fact>]
         let ``quits then game when suiciding`` () =
-            let reader : InputReader =
+            let reader : IInputReader =
                 fun () -> "suicide"
             let mutable output = []
-            let writer : OutputWriter = 
+            let writer : IOutputWriter = 
                 fun message -> 
                     output <- message::output
 
-            let result = gameEngine game reader writer
+            let result = iGameEngine game reader writer
 
             result |> should equal 0
             output |> should equal ["see you in hell"]
     
     module MonadicIOAcceptance =
-        open MonadicIO
-        open MonadicMain
+        open MIO
+        open MMain
 
         [<Fact>]
         let ``monadically quits then game when suiciding`` () =
             let reader : MInputReader =
-                IO(fun () -> "suicide")
+                MIO(fun () -> "suicide")
 
             let mutable output = []
             let writer : MOutputWriter = 
-                fun message -> IO(fun () -> output <- message::output)
+                fun message -> MIO(fun () -> output <- message::output)
 
             let result = mGameEngine game reader writer
 
@@ -53,7 +55,7 @@ module AcceptanceTests =
             output |> should equal ["see you in hell"]
 
     module HaskellIOAcceptance =
-        open HMonadIO
+        open HIO
         open HMain
         open System.Collections.Generic
 
