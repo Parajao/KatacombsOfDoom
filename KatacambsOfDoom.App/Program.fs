@@ -94,14 +94,21 @@ module HMain =
     type HGameEngine = Game -> HInputReader -> HOutputWriter -> int
     let rec hGameEngine : HGameEngine =
         fun game reader writer ->
-            let action = io{
+            let readCommand = io{
                 let! input = reader
-                return! writer <| game input 
-                match input with
-                | "suicide" -> return 0
-                | _ -> return hGameEngine game reader writer
+                return input
             }
-            run action
+            let command = run readCommand
+            
+            let writeOutput = io{
+                return! writer <| game command 
+            }
+            run writeOutput
+
+            match command with
+            | "suicide" -> 0
+            | _ -> hGameEngine game reader writer
+            
                     
                     
 
@@ -139,6 +146,6 @@ module App =
             match engineType with
             | "m" -> mGameEngine game mReadInput mWriteOutput
             | "h" -> hGameEngine game hReadInput hWriteOutput
-            | _ -> iGameEngine game iReadInput iWriteOutput
+            | _   -> iGameEngine game iReadInput iWriteOutput
         iReadInput () |> ignore
         result 
